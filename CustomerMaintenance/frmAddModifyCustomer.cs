@@ -45,7 +45,7 @@ namespace CustomerMaintenance
             txtPhone.Text = cstAddModCust.CustPhone;
             if (cstAddModCust.CustReferredBy == 0)
             {
-                txtReferred.Text = "N/A";
+                txtReferred.Text = null;
             }
             else
             {
@@ -53,7 +53,6 @@ namespace CustomerMaintenance
             }
         }
 
-        //should we add a clear button?
         private void btnAccept_Click(object sender, EventArgs e)
         {
             if (IsValidData())
@@ -102,29 +101,22 @@ namespace CustomerMaintenance
         //is there a cleaner way to do this? Becker says no
         private bool IsValidData()
         {
-            if (
+            return
                 Validator.IsPresent(txtFirstName) &&
+                Validator.IsCleanString(txtFirstName) &&
                 Validator.IsPresent(txtLastName) &&
+                Validator.IsCleanString(txtLastName) &&
                 Validator.IsPresent(txtStreetNum) &&
                 Validator.IsInt32(txtStreetNum) &&
                 Validator.IsPresent(txtStreetName) &&
+                Validator.IsCleanString(txtStreetName) &&
                 Validator.IsPresent(txtCity) &&
-                Validator.IsPresent(cboStates)
-                )
-            {
-                //Check the data that goes into the DB if the referred is empty
-                if (Validator.IsPresent(txtReferred))
-                {
-                    if (Validator.IsInt32(txtReferred))
-                        return true;
-                    else
-                        return false;
-                }
-                else
-                    return true;
-            }
-            else
-                return false;
+                Validator.IsCleanString(txtCity) &&
+                Validator.IsPresent(cboStates) &&
+                Validator.IsPresent(txtPhone) &&
+                Validator.IsPhoneNum(txtPhone) &&
+                Validator.OptionalIntCheck(txtReferred);        
+
         }
 
         private void PutCustomerData(Customer Customer)
@@ -137,7 +129,7 @@ namespace CustomerMaintenance
             Customer.CustCity = txtCity.Text;
             Customer.CustState = cboStates.Text;
             Customer.CustPhone = txtPhone.Text;
-            if (Validator.IsPresent(txtReferred))
+            if (txtReferred.Text != "")
             Customer.CustReferredBy = Convert.ToInt32(txtReferred.Text);
 
         }

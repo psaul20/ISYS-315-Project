@@ -71,7 +71,7 @@
             // 
             // btnGetCustomer
             // 
-            this.btnGetCustomer.Location = new System.Drawing.Point(143, 12);
+            this.btnGetCustomer.Location = new System.Drawing.Point(142, 10);
             this.btnGetCustomer.Name = "btnGetCustomer";
             this.btnGetCustomer.Size = new System.Drawing.Size(96, 23);
             this.btnGetCustomer.TabIndex = 1;
@@ -182,7 +182,7 @@
             this.txtPhone.Location = new System.Drawing.Point(86, 128);
             this.txtPhone.Name = "txtPhone";
             this.txtPhone.ReadOnly = true;
-            this.txtPhone.Size = new System.Drawing.Size(300, 20);
+            this.txtPhone.Size = new System.Drawing.Size(111, 20);
             this.txtPhone.TabIndex = 8;
             this.txtPhone.TabStop = false;
             this.txtPhone.Tag = "Phone";
@@ -263,6 +263,7 @@
             // 
             // frmCustomerMaintenance
             // 
+            this.AcceptButton = this.btnGetCustomer;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnExit;

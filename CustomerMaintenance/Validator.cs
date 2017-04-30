@@ -38,11 +38,11 @@ namespace CustomerMaintenance
         {
             if (Control.GetType().ToString() == "System.Windows.Forms.TextBox")
             {
-                TextBox textBox = (TextBox)Control;
-                if (textBox.Text == "")
+                TextBox txtBox = (TextBox)Control;
+                if (txtBox.Text == "")
                 {
-                    MessageBox.Show(textBox.Tag + " is a required field.", Title);
-                    textBox.Focus();
+                    MessageBox.Show(txtBox.Tag + " is a required field.", Title);
+                    txtBox.Focus();
                     return false;
                 }
             }
@@ -54,6 +54,23 @@ namespace CustomerMaintenance
                     MessageBox.Show(comboBox.Tag + " is a required field.", "Entry Error");
                     comboBox.Focus();
                     return false;
+                }
+            }
+            return true;
+        }
+
+        public static bool OptionalIntCheck(Control Control)
+        {
+            if (Control.GetType().ToString() == "System.Windows.Forms.TextBox")
+            {
+                TextBox txtBox = (TextBox)Control;
+                if (txtBox.Text == "")
+                {
+                    return true;
+                }
+                else
+                {                 
+                    return IsInt32(txtBox);
                 }
             }
             return true;
@@ -97,6 +114,80 @@ namespace CustomerMaintenance
                 TextBox.Focus();
                 return false;
             }
+            catch (OverflowException)
+            {
+                MessageBox.Show(TextBox.Tag + " is outside of acceptable range.", Title);
+                TextBox.Focus();
+                return false;
+            }
+        }
+
+        public static bool IsPhoneNum(TextBox TextBox)
+        {
+            try
+            {
+                int intPhoneNum = Convert.ToInt32(TextBox.Text);
+                if (TextBox.Text.Length == 10 && intPhoneNum > 0)
+                    return true;
+                else
+                {
+                    MessageBox.Show(TextBox.Tag + " must be a valid phone number " +
+                        "in the following format: 9999999999", Title);
+                    TextBox.Focus();
+                    return false;
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show(TextBox.Tag + " must be a valid phone number" +
+                    " in the following format: 9999999999", Title);
+                TextBox.Focus();
+                return false;
+            }
+        }
+
+        public static bool IsCleanString (TextBox TextBox)
+        {
+            string strText = TextBox.Text;
+
+            bool blnNotSymbol = true;
+
+            foreach (char c in strText)
+            {
+                if (c > 64 && c < 91 || c > 96 && c < 123 || c == 39 || c == 32)
+                    blnNotSymbol = true;
+
+                else
+                {
+                    blnNotSymbol = false;
+                    break;
+                }
+            }
+
+            if (blnNotSymbol == false)
+            {
+                MessageBox.Show(TextBox.Tag + " may not contain numbers or symbols.", Title);
+                TextBox.Focus();
+                return false;
+            }
+
+            //if (strText.Any(char.IsDigit))              
+            //{
+            //    MessageBox.Show(TextBox.Tag + " may not contain numbers.", Title);
+            //    TextBox.Focus();
+            //    return false;
+            //}
+            
+            //else if (strText.Length > 50)
+            //{
+            //    MessageBox.Show(TextBox.Tag + " may not be more than 50 characters in length.", Title);
+            //    TextBox.Focus();
+            //    return false;
+            //}
+
+            else
+            return true;
+
         }
 
         /// <summary>
