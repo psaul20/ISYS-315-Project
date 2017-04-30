@@ -159,9 +159,10 @@
             // 
             this.txtPhone.Location = new System.Drawing.Point(90, 93);
             this.txtPhone.Name = "txtPhone";
-            this.txtPhone.Size = new System.Drawing.Size(300, 20);
+            this.txtPhone.Size = new System.Drawing.Size(112, 20);
             this.txtPhone.TabIndex = 6;
             this.txtPhone.Tag = "Phone";
+            this.txtPhone.Text = "e.g. 9999999999";
             // 
             // label8
             // 

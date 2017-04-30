@@ -32,13 +32,6 @@ namespace CustomerMaintenance
                     sqlSelectCommand.ExecuteReader(CommandBehavior.SingleRow);
                 if (sqlCustReader.Read())
                 {
-                    //string strReaderTest = "";
-                    //for (int i = 0; i < 5; i++)
-                    //{
-                    //    strReaderTest = strReaderTest + sqlCustReader.GetString(i);          
-                    //}
-                    //MessageBox.Show(strReaderTest);
-
                     Customer cstGetCust = new Customer();
                     cstGetCust.CustID = (int)sqlCustReader["CUSTOMER_ID"];
                     cstGetCust.CustLastName = sqlCustReader["CUSTOMER_LAST_NAME"].ToString();
@@ -48,7 +41,6 @@ namespace CustomerMaintenance
                     cstGetCust.CustCity = sqlCustReader["CUSTOMER_CITY"].ToString();
                     cstGetCust.CustState = sqlCustReader["CUSTOMER_STATE"].ToString();
                     cstGetCust.CustPhone = sqlCustReader["CUSTOMER_PHONE"].ToString();
-                    //is there a more adaptable way to do this?
                     if (!sqlCustReader.IsDBNull(8))
                     {
                         cstGetCust.CustReferredBy = (int)sqlCustReader["CUSTOMER_REFERRED_BY"];
@@ -103,8 +95,12 @@ namespace CustomerMaintenance
                 "@CUSTOMER_STATE", Customer.CustState);
             sqlInsertNewCust.Parameters.AddWithValue(
                 "@CUSTOMER_PHONE", Customer.CustPhone);
-            sqlInsertNewCust.Parameters.AddWithValue(
-                "@CUSTOMER_REFERRED_BY", Customer.CustReferredBy);
+            if (Customer.CustReferredBy != 0)
+                sqlInsertNewCust.Parameters.AddWithValue(
+                    "@CUSTOMER_REFERRED_BY", Customer.CustReferredBy);
+            else
+                sqlInsertNewCust.Parameters.AddWithValue(
+                    "@CUSTOMER_REFERRED_BY", null);
 
             try
             {
@@ -136,9 +132,8 @@ namespace CustomerMaintenance
             MySqlConnection sqlWildcatConnect = WildCatPizzaDB.GetConnection();
 
             string strUpdateCust =
-                //do we need to be able to change a customer's ID or referral? no to id, see to referral
+                //do we need to be able to change a customer's ID or referral? no to id, yes to referral
                 "UPDATE Customer SET " +
-                //"CUSTOMER_ID = @NewID, " +
                 "CUSTOMER_LAST_NAME = @NewLastName, " +
                 "CUSTOMER_FIRST_NAME = @NewFirstName, " +
                 "CUSTOMER_STREET_NUMBER = @NewStreetNum, " +
@@ -154,8 +149,11 @@ namespace CustomerMaintenance
                 "AND CUSTOMER_STREET_NAME = @OldStreetName " +
                 "AND CUSTOMER_CITY = @OldCity " +
                 "AND CUSTOMER_STATE = @OldState " +
-                "AND CUSTOMER_PHONE = @OldPhone " +
-                "AND CUSTOMER_REFERRED_BY = @OldReferral ";
+                "AND CUSTOMER_PHONE = @OldPhone ";
+            if (OldCustomer.CustReferredBy != 0)
+                strUpdateCust = 
+                    strUpdateCust + "AND CUSTOMER_REFERRED_BY = @OldReferral ";
+
             MySqlCommand sqlUpdateCustCommand =
                 new MySqlCommand(strUpdateCust, sqlWildcatConnect);
             sqlUpdateCustCommand.Parameters.AddWithValue(
@@ -174,8 +172,12 @@ namespace CustomerMaintenance
                 "@NewState", NewCustomer.CustState);
             sqlUpdateCustCommand.Parameters.AddWithValue(
                 "@NewPhone", NewCustomer.CustPhone);
-            sqlUpdateCustCommand.Parameters.AddWithValue(
-                "@NewReferral", NewCustomer.CustReferredBy);
+            if (NewCustomer.CustReferredBy != 0)
+                sqlUpdateCustCommand.Parameters.AddWithValue(
+                    "@NewReferral", NewCustomer.CustReferredBy);
+            else
+                sqlUpdateCustCommand.Parameters.AddWithValue(
+                    "@NewReferral", null);
             sqlUpdateCustCommand.Parameters.AddWithValue(
                 "@OldID", OldCustomer.CustID);
             sqlUpdateCustCommand.Parameters.AddWithValue(
@@ -192,8 +194,9 @@ namespace CustomerMaintenance
                 "@OldState", OldCustomer.CustState);
             sqlUpdateCustCommand.Parameters.AddWithValue(
                 "@OldPhone", OldCustomer.CustPhone);
-            sqlUpdateCustCommand.Parameters.AddWithValue(
-                "@OldReferral", OldCustomer.CustReferredBy);
+            if (OldCustomer.CustReferredBy != 0)
+                sqlUpdateCustCommand.Parameters.AddWithValue(
+                    "@OldReferral", OldCustomer.CustReferredBy);
 
             try
             {
@@ -206,7 +209,6 @@ namespace CustomerMaintenance
             }
             catch (MySqlException ex)
             {
-//MessageBox.Show(ex.Message, ex.GetType().ToString());
                 throw ex;
             }
             finally
