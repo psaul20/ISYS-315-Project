@@ -1,4 +1,6 @@
-﻿//AUTHOR:		Your Name
+﻿//AUTHOR:		Fantastic Four 
+//              Hannah Christman, David Cisarik
+//              Grace Evans, Patrick Saul
 //COURSE:		ISYS 315.501
 //FORM:		    frmCustomerMaintenance
 //PURPOSE:		This program is intended to allow users to add 
@@ -38,6 +40,10 @@
 //              Similarly, a MySQL data reader is opened to retrieve the results of
 //              the GetCustomer query, and closed once the necessary information has
 //              been handled.
+//ADDITIONAL
+//DETAILS:      This program assumes that the underlying database contains null
+//              wherever a customer does not have a referring customer associated
+//              with it.
 //HONOR CODE:	“On my honor, as an Aggie, I have neither given 
 //			    nor received unauthorized aid on this academic 
 //			    work.”
@@ -53,7 +59,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Data.SqlClient;
 
 
 namespace CustomerMaintenance
@@ -70,7 +75,9 @@ namespace CustomerMaintenance
         private Customer cstCustomer;
 
         /// <summary>
-        /// This method validates the data inputted into the "Customer ID"
+        /// This event handler for the Get Customer button
+        /// calls methods from the validator class which 
+        /// validate the data inputted into the "Customer ID"
         /// text box on the inital form for the program, passes that ID
         /// on to the GetCustomer method, then displays the details of 
         /// that customer once they are retrieved from the database and
@@ -96,7 +103,18 @@ namespace CustomerMaintenance
             }
         }
 
-
+        /// <summary>
+        /// This method receives the customer ID that was passed along
+        /// by the btnGetCustomer_Click event handler, and then passes
+        /// the ID along to the GetCustomer method in the CustomerDB
+        /// class to retrieve a customer from the database. Once the
+        /// customer details are retrieved, they are assigned to the
+        /// properties of the previously instantiated cstCustomer object.
+        /// TryCatch is included to handle any exceptions that are thrown
+        /// when communicating with the database.
+        /// </summary>
+        /// <param name="CustomerID">The Customer ID associated with
+        /// the customer that the user seeks to retrieve details for.</param>
         private void GetCustomer(int CustomerID)
         {
             try
@@ -109,6 +127,11 @@ namespace CustomerMaintenance
             }
         }
 
+        /// <summary>
+        /// This method clears the text boxes when a Customer ID is
+        /// inputted into the CustomerID box, but the corresponding
+        /// customer information cannot be found.
+        /// </summary>
         private void ClearControls()
         {
             txtCustomerID.Text = "";
@@ -124,6 +147,11 @@ namespace CustomerMaintenance
             txtCustomerID.Focus();
         }
 
+        /// <summary>
+        /// This method loads the properties of the instantiated
+        /// cstCustomer object into the textboxes when a customer
+        /// is retrieved from the database.
+        /// </summary>
         private void DisplayCustomer()
         {
             txtFirstName.Text = cstCustomer.CustFirstName;
@@ -144,6 +172,17 @@ namespace CustomerMaintenance
             btnModify.Enabled = true;
         }
 
+        /// <summary>
+        /// This event handler for the Add button
+        /// instantiates a new frmAddModifyCustomer
+        /// as an add customer form, presents the form as a dialog box,
+        /// then waits for the result of the user's interaction with the
+        /// new form. If the user succesfully adds a new customer into the database
+        /// the form stores the newly added customer into the cstCustomer object
+        /// and displays the customer's details on the original form.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnAdd_Click(object sender, EventArgs e)
         {
             frmAddModifyCustomer frmAddCustomerForm = new frmAddModifyCustomer();
@@ -157,6 +196,18 @@ namespace CustomerMaintenance
             }
         }
 
+        /// <summary>
+        /// This event handler for the Modify button
+        /// instantiates a new frmAddModifyCustomer as
+        /// a modify customer form, passes the previously instantiated 
+        /// and defined cstCustomer object onto the modify customer form,
+        /// presents the form as a dialog box, then waits for the result.
+        /// if the customer successfully modifies the customer, the newly
+        /// modified customer's details will be displayed in the read-only
+        /// textboxes on the original form.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnModify_Click(object sender, EventArgs e)
         {
             frmAddModifyCustomer frmModifyCustomer = new frmAddModifyCustomer();
@@ -166,21 +217,27 @@ namespace CustomerMaintenance
             if (result == DialogResult.OK)
             {
                 cstCustomer = frmModifyCustomer.cstAddModCust;
-                this.DisplayCustomer();
+                DisplayCustomer();
             }
             else if (result == DialogResult.Retry)
             {
-                this.GetCustomer(cstCustomer.CustID);
+                GetCustomer(cstCustomer.CustID);
                 if (cstCustomer != null)
-                    this.DisplayCustomer();
+                    DisplayCustomer();
                 else
-                    this.ClearControls();
+                    ClearControls();
             }
         }
 
+        /// <summary>
+        /// This event handler closes the form when the exit button
+        /// is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnExit_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

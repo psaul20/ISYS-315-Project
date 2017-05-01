@@ -4,14 +4,30 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
-using System.Data.SqlClient;
 using MySql.Data.MySqlClient;
 using System.Windows.Forms;
 
 namespace CustomerMaintenance
 {
+    /// <summary>
+    /// This class handles all connections and SQL
+    /// statements passed along to the Customer table
+    /// within the Wildcat Pizza database.
+    /// </summary>
     public static class CustomerDB
     {
+        /// <summary>
+        /// This method receives a Customer ID as an input,
+        /// writes an SQL statement, passes that statement along
+        /// to the database in order to retrieve the information 
+        /// associated with that CustomerID, then loads the 
+        /// information into a Customer object and returns it.
+        /// </summary>
+        /// <param name="CustomerID"> The customer ID associated
+        /// with the customer that the user seeks to retrieve.</param>
+        /// <returns>cstGetCust, a customer object that contains
+        /// properties corresponding to that customer's fields in the 
+        /// database.</returns>
         public static Customer GetCustomer(int CustomerID)
         {
             MySqlConnection sqlWildcatConnect = WildCatPizzaDB.GetConnection();
@@ -41,6 +57,10 @@ namespace CustomerMaintenance
                     cstGetCust.CustCity = sqlCustReader["CUSTOMER_CITY"].ToString();
                     cstGetCust.CustState = sqlCustReader["CUSTOMER_STATE"].ToString();
                     cstGetCust.CustPhone = sqlCustReader["CUSTOMER_PHONE"].ToString();
+
+                    //This if statement checks whether or not the customer has a
+                    //referral number associated with it in the database, then writes
+                    //that referral number to the CustReferredBy property or omits it
                     if (!sqlCustReader.IsDBNull(8))
                     {
                         cstGetCust.CustReferredBy = (int)sqlCustReader["CUSTOMER_REFERRED_BY"];
@@ -53,7 +73,7 @@ namespace CustomerMaintenance
                     return null;
                 }
             }
-            catch (SqlException ex)
+            catch (MySqlException ex)
             {
                 throw ex;
             }
@@ -63,6 +83,18 @@ namespace CustomerMaintenance
             }
         }
 
+        /// <summary>
+        /// This method receives a customer object from an
+        /// Add customer form, queries the database to receive the 
+        /// current highest customer ID, sets the new customer's ID to
+        /// 1 + the highest ID number, then writes a sql statement to insert
+        /// the customer's properties into the database and passes it along
+        /// to the database.
+        /// </summary>
+        /// <param name="Customer"> The customer object that contains the
+        /// properties that the user seeks to add to the database.</param>
+        /// <returns>The Customer ID associated with the customer that
+        /// was successfully added to the database.</returns>
         public static int AddCustomer(Customer Customer)
         {
             MySqlConnection sqlWildcatConnect = WildCatPizzaDB.GetConnection();
@@ -95,6 +127,12 @@ namespace CustomerMaintenance
                 "@CUSTOMER_STATE", Customer.CustState);
             sqlInsertNewCust.Parameters.AddWithValue(
                 "@CUSTOMER_PHONE", Customer.CustPhone);
+
+            //This if/else statement checks whether or not the added
+            //customer has a referral number associated with it, then 
+            //passes inserts the referral number or a null value into
+            //the statement depending on whether or not a referral is
+            //present.
             if (Customer.CustReferredBy != 0)
                 sqlInsertNewCust.Parameters.AddWithValue(
                     "@CUSTOMER_REFERRED_BY", Customer.CustReferredBy);
@@ -126,13 +164,27 @@ namespace CustomerMaintenance
             }
         }
 
+        /// <summary>
+        /// This method receives 2 customer objects, one representing the 
+        /// customer's properties pre-modification, and one representing the
+        /// customer's properties post-modification. The method then writes an
+        /// SQL Update statement to make the appropriate changes to the customer
+        /// in the database, passes it along to the database, and returns the
+        /// number of rows affected to confirm that the changes were made 
+        /// successfully.
+        /// </summary>
+        /// <param name="OldCustomer">A customer object that contains the properties
+        /// of a customer pre-modification</param>
+        /// <param name="NewCustomer">A customer object that contains the properties
+        /// of a customer post-modification</param>
+        /// <returns>intRowsaffected which represents the number of rows affected 
+        /// by the SQL Update.</returns>
         public static bool UpdateCustomer(Customer OldCustomer,
             Customer NewCustomer)
         {
             MySqlConnection sqlWildcatConnect = WildCatPizzaDB.GetConnection();
 
             string strUpdateCust =
-                //do we need to be able to change a customer's ID or referral? no to id, yes to referral
                 "UPDATE Customer SET " +
                 "CUSTOMER_LAST_NAME = @NewLastName, " +
                 "CUSTOMER_FIRST_NAME = @NewFirstName, " +

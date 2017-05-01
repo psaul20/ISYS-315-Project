@@ -59,6 +59,15 @@ namespace CustomerMaintenance
             return true;
         }
 
+        /// <summary>
+        /// This method checks whether or not an optional text box
+        /// contains any inputs, and if so passes the string along
+        /// to the IsInt32 method.
+        /// </summary>
+        /// <param name="Control">A control that will be validated
+        /// by the method.</param>
+        /// <returns>A boolean value true or false depending on whether
+        /// or not the validation succeeds.</returns>
         public static bool OptionalIntCheck(Control Control)
         {
             if (Control.GetType().ToString() == "System.Windows.Forms.TextBox")
@@ -122,6 +131,13 @@ namespace CustomerMaintenance
             }
         }
 
+        /// <summary>
+        /// This method checks whether or not a textbox contains a value
+        /// that could be considered a valid phonenumber.
+        /// </summary>
+        /// <param name="TextBox">A textbox to be validated by the method.</param>
+        /// <returns>Boolean true or false depending on whether or not the
+        /// validation succeeds.</returns>
         public static bool IsPhoneNum(TextBox TextBox)
         {
             try
@@ -146,6 +162,14 @@ namespace CustomerMaintenance
             }
         }
 
+        /// <summary>
+        /// This method contains a "white list" for the acceptable
+        /// characters to be input into a text box, and validates a 
+        /// textbox based on this white list.
+        /// </summary>
+        /// <param name="TextBox">A textbox to be validated by the method.</param>
+        /// <returns>Boolean true or false depending on whether or not the
+        /// validation succeeds.</returns>
         public static bool IsCleanString (TextBox TextBox)
         {
             string strText = TextBox.Text;
@@ -170,20 +194,6 @@ namespace CustomerMaintenance
                 TextBox.Focus();
                 return false;
             }
-
-            //if (strText.Any(char.IsDigit))              
-            //{
-            //    MessageBox.Show(TextBox.Tag + " may not contain numbers.", Title);
-            //    TextBox.Focus();
-            //    return false;
-            //}
-            
-            //else if (strText.Length > 50)
-            //{
-            //    MessageBox.Show(TextBox.Tag + " may not be more than 50 characters in length.", Title);
-            //    TextBox.Focus();
-            //    return false;
-            //}
 
             else
             return true;
