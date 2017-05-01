@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace CustomerMaintenance
 {
+    /// <summary>
+    /// This class represents a customer object that contains
+    /// properties according to the specifications provided
+    /// by WildCat Pizza.
+    /// </summary>
     public class Customer
     {
         private int intCustID;
