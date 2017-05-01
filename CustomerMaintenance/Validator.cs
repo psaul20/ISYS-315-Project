@@ -119,7 +119,7 @@ namespace CustomerMaintenance
             }
             catch (FormatException)
             {
-                MessageBox.Show(TextBox.Tag + " must be an integer.", Title);
+                MessageBox.Show(TextBox.Tag + " must be a whole number.", Title);
                 TextBox.Focus();
                 return false;
             }
